@@ -13,4 +13,5 @@ def handle_events():
                     if event.key == pygame.K_TAB:
                                 return 'toggle_fullscreen'
                     # other keydowns
+
     return False
