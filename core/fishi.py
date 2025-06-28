@@ -24,8 +24,8 @@ def start():
     clock = pygame.time.Clock()
     running = True
 
-    goldfish, catfish, angelfish, bass, trout, anchovy, clownfish, crab, pufferfish, surgeonfish, worm, rusty_can, menu_bg, ocean_bg_frames = resource_handler.load_resources()
-    player, mouse, ocean_bg = create_objects(goldfish, ocean_bg_frames)
+    goldfish, catfish, angelfish, bass, trout, anchovy, clownfish, crab, pufferfish, surgeonfish, worm, rusty_can, menu_bg, ocean_bg_frames, moving_waves_frames = resource_handler.load_resources()
+    game, menu, player, mouse, ocean_bg = create_objects(goldfish, ocean_bg_frames, menu_bg, moving_waves_frames)
 
     while running:
         event = events.handle_events()
@@ -34,14 +34,17 @@ def start():
         elif event == 'toggle_fullscreen':
             toggle_fullscreen()
         
-        screen_update(screen, clock, player, mouse, ocean_bg)
+        game.screen_update(screen, menu, clock, player, mouse, ocean_bg)
     quit()
 
-def create_objects(goldfish, ocean_bg_frames):
+
+def create_objects(goldfish, ocean_bg_frames, menu_bg, moving_waves_frames):
+    game = Game()
     player = Player(goldfish)
     mouse = Mouse()
     ocean_bg = Gif(ocean_bg_frames, 30, (0,0))
-    return player, mouse, ocean_bg
+    menu = Menu(menu_bg, moving_waves_frames)
+    return game, menu, player, mouse, ocean_bg
 
 
 def toggle_fullscreen():
@@ -58,24 +61,59 @@ def quit():
     pygame.quit()
     sys.exit()
 
-def screen_update(screen, clock, player, mouse, ocean_bg):
-    screen.fill(config.BLACK)
-    mouse.update_position()
-    draw(screen, player, mouse, ocean_bg)
-    clock.tick(60)
-    pygame.display.flip()
+class Game:
+    def __init__(self):
+        self.status = 'menu'
 
-def draw(screen, player, mouse, ocean_bg):
-    ocean_bg.update(screen)
-    player.update(mouse, screen)
+    def screen_update(self, screen, menu, clock, player, mouse, ocean_bg):
+        if self.status == 'menu':
+            self.screen_update_menu(screen, menu)
+        if self.status == 'playing':
+            self.screen_update_playing(screen, player, mouse, ocean_bg)
+        clock.tick(60)
+        pygame.display.flip()
+    
+    def screen_update_menu(self, screen, menu):
+        screen.fill(config.BLACK)
+        menu.update(screen)
+
+    def screen_update_playing(self, screen, player, mouse, ocean_bg):
+        screen.fill(config.BLACK)
+        mouse.update_position()
+        #draw
+        ocean_bg.update(screen)
+        player.update(mouse, screen)
+
+class Menu:
+    def __init__(self, menu_bg, moving_waves_frames):
+        self.menu_bg = menu_bg
+        self.menu_bg_pos = (0,0)
+        self.moving_waves = Gif(moving_waves_frames, 300, (-5,100), 1.07)
+
+    def update(self, screen):
+        self.scale()
+        self.draw(screen)
+
+    def scale(self):
+        self.menu_bg = pygame.transform.scale(self.menu_bg, (config.screen_width, config.screen_height))
+
+    def draw(self, screen):
+        screen.blit(self.menu_bg, (self.menu_bg_pos))
+        self.moving_waves.update(screen)
+
 
 class Gif:
-    def __init__(self, frames, delay, pos):
+    def __init__(self, frames, delay, pos, size=None):
         self.frames = frames
         self.delay = delay
         self.last_update = 0
         self.index = 0
         self.pos = pos
+        self.size = size
+        if self.size == None:
+            self.is_bg = True
+        else:
+            self.is_bg = False
 
     def update_animation(self):
         current_time = pygame.time.get_ticks()
@@ -85,10 +123,13 @@ class Gif:
             self.index = (self.index + 1) % len(self.frames)
     
     def scale(self):
-        scale_width = int(config.screen_width * 1.2)
-        aspect_ratio = self.frames[self.index].get_height() / self.frames[self.index].get_width()
-        scale_height = int(scale_width * aspect_ratio)
-        self.frames[self.index] = pygame.transform.scale(self.frames[self.index], (scale_width, scale_height))
+        if self.is_bg:
+            self.frames[self.index] = pygame.transform.scale(self.frames[self.index], (config.screen_width, config.screen_height))
+        else:
+            scale_width = int(config.screen_width * self.size)
+            aspect_ratio = self.frames[self.index].get_height() / self.frames[self.index].get_width()
+            scale_height = int(scale_width * aspect_ratio)
+            self.frames[self.index] = pygame.transform.scale(self.frames[self.index], (scale_width, scale_height))
 
     def draw(self, screen):
         screen.blit(self.frames[self.index], self.pos)
@@ -114,8 +155,6 @@ class Player:
         scale_height = int(scale_width * aspect_ratio)
         self.image = pygame.transform.scale(self.image_original, (scale_width, scale_height))
         
-        #self.x = config.screen_width/2
-        #self.y = config.screen_height/2
         self.pos = (mouse.x, mouse.y)
 
         self.width = self.image.get_width()
@@ -123,17 +162,6 @@ class Player:
 
     def update_rotation(self, mouse):
         
-        # if mouse.x_displace > 0:
-        #     if self.rotation < 0:
-        #         self.rotation += 5
-        #     elif self.rotation > 0:
-        #         self.rotation -= 5
-        # elif mouse.x_displace < 0:
-        #     if self.rotation < 180:
-        #         self.rotation -= 5
-        #     elif self.rotation > 180:
-        #         self.rotation += 5
-
         if mouse.x_displace**2 + mouse.y_displace**2 > 1:
             self.angle = -math.degrees(math.atan2(mouse.y_displace, mouse.x_displace))
         self.image = pygame.transform.rotozoom(self.image, self.angle, 1)
@@ -159,6 +187,3 @@ class Mouse:
         self.x, self.y = pygame.mouse.get_pos()
         self.x_displace = self.x - self.old_x
         self.y_displace = self.y - self.old_y
-
-        print('x displacement: ', self.x_displace)
-        print('y displacement: ', self.y_displace)

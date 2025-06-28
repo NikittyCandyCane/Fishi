@@ -1,5 +1,5 @@
 # Game window settings
-WINDOW_WIDTH = 800
+WINDOW_WIDTH = 900
 WINDOW_HEIGHT = 600
 TITLE = 'fishi'
 FULLSCREEN = False
