@@ -37,6 +37,8 @@ def start():
             running = False
         elif event == 'toggle_fullscreen':
             toggle_fullscreen()
+        elif event == 'mouse_click':
+            mouse.click(game, menu, screen)
         
         game.screen_update(screen, menu, clock, player, mouse, ocean_bg)
     quit()
@@ -46,7 +48,7 @@ def create_objects(goldfish, ocean_bg_frames, menu_bg, moving_waves_frames, star
     game = Game()
     player = Player(goldfish)
     mouse = Mouse()
-    ocean_bg = utils.Gif(ocean_bg_frames, 30, (0,0))
+    ocean_bg = utils.Gif(ocean_bg_frames, 30, 0, 0)
     menu = menu_ui.Menu(menu_bg, moving_waves_frames, start_button_img, finish_button_img)
     return game, menu, player, mouse, ocean_bg
 
@@ -136,3 +138,9 @@ class Mouse:
         self.x, self.y = pygame.mouse.get_pos()
         self.x_displace = self.x - self.old_x
         self.y_displace = self.y - self.old_y
+
+    def click(self, game, menu, screen):
+        if game.status == 'menu':
+            action = menu.click(screen)
+            if action == 'quit':
+                quit()

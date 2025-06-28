@@ -2,12 +2,13 @@ import pygame
 import config
 
 class Gif:
-    def __init__(self, frames, delay, pos, size=None):
+    def __init__(self, frames, delay, x, y, size=None):
         self.frames = frames
         self.delay = delay
         self.last_update = 0
         self.index = 0
-        self.pos = pos
+        self.x = x
+        self.y = y
         self.size = size
         if self.size == None:
             self.is_bg = True
@@ -31,9 +32,48 @@ class Gif:
             self.frames[self.index] = pygame.transform.scale(self.frames[self.index], (scale_width, scale_height))
 
     def draw(self, screen):
-        screen.blit(self.frames[self.index], self.pos)
+        screen.blit(self.frames[self.index], (self.x, self.y))
 
     def update(self, screen):
         self.update_animation()
         self.scale()
         self.draw(screen)
+    
+def fade_out(screen, delay, last_update, speed=5):
+    fade_surface = pygame.Surface(screen.get_size())
+    fade_surface.fill((config.BLACK))
+    current_time = pygame.time.get_ticks()
+
+    if current_time - last_update >= delay:
+            last_update = current_time
+            alpha -= 1
+            fade_surface.set_alpha(alpha)
+
+    screen.blit(fade_surface, (0,0))
+
+class Fade:
+    def __init__(self, name, screen, speed=5):
+        self.fade_surface = pygame.Surface(screen.get_size())
+        self.fade_surface.fill((config.BLACK))
+        self.delay = 5
+        self.speed = speed
+        self.last_update = 0
+        self. name = name
+        if name == 'out':
+            self.alpha = 0
+        else:
+            self.alpha = 256
+
+    def fade_out(self, screen):
+        self.fade_surface = pygame.Surface(screen.get_size())
+        self.fade_surface.fill((config.BLACK))
+        current_time = pygame.time.get_ticks()
+
+        if current_time - self.last_update >= self.delay:
+                self.last_update = current_time
+                self.alpha -= 1
+                self.fade_surface.set_alpha(self.alpha)
+        self.draw(screen)
+
+    def draw(self, screen):    
+        screen.blit(self.fade_surface, (0,0))

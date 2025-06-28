@@ -10,9 +10,11 @@ class Menu:
     def __init__(self, menu_bg, moving_waves_frames, start_button_img, finish_button_img):
         self.menu_bg = menu_bg
         self.menu_bg_pos = (0,0)
-        self.moving_waves = utils.Gif(moving_waves_frames, 300, (-5,100), 1.07)
+        self.moving_waves = utils.Gif(moving_waves_frames, 300, -5, 100, 1.07)
         self.start_button = Button('start', start_button_img, 0.3)
         self.finish_button = Button('finish', finish_button_img, 0.3)
+        self.trans_last_update = 0
+        self.is_trans = False
 
     def update(self, screen):
         self.scale()
@@ -26,6 +28,18 @@ class Menu:
         self.moving_waves.update(screen)
         self.start_button.update(screen)
         self.finish_button.update(screen)
+        if self.is_trans:
+            self.wave_transition(screen)
+
+    def wave_transition(self, screen):
+        self.fade.fade_out(screen)
+
+    def click(self, screen):
+        if self.start_button.rect.collidepoint(pygame.mouse.get_pos()):
+            self.is_trans = True
+            self.fade = utils.Fade('out', screen)
+        if self.finish_button.rect.collidepoint(pygame.mouse.get_pos()):
+            return 'quit'
         
 
 class Button:
@@ -50,7 +64,7 @@ class Button:
 
     def find_pos(self):
         if self.name == 'start':
-            rect = self.image.get_rect(center=(config.screen_width/2, config.screen_height/4))
+            self.rect = self.image.get_rect(center=(config.screen_width/2, config.screen_height/4))
         if self.name == 'finish':
-            rect = self.image.get_rect(center=(config.screen_width/2, (config.screen_height/5)*3))
-        self.pos = rect.topleft
+            self.rect = self.image.get_rect(center=(config.screen_width/2, (config.screen_height/5)*3))
+        self.pos = self.rect.topleft
