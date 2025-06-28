@@ -1,7 +1,8 @@
 # Game window settings
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
-FULSCREEN = False
+TITLE = 'fishi'
+FULLSCREEN = False
 
 # Frames per second
 FPS = 60

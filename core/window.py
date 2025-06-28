@@ -7,5 +7,7 @@ def create_window():
     else:
         screen = pygame.display.set_mode((config.WINDOW_WIDTH, config.WINDOW_HEIGHT))
 
+    screen_width, screen_height = screen.get_size()
+
     pygame.display.set_caption(config.TITLE)
     return screen
