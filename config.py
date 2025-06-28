@@ -4,6 +4,9 @@ WINDOW_HEIGHT = 600
 TITLE = 'fishi'
 FULLSCREEN = False
 
+screen_width = WINDOW_WIDTH
+screen_height = WINDOW_HEIGHT
+
 # Frames per second
 FPS = 60
 
