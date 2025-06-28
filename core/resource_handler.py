@@ -22,6 +22,17 @@ def load_resources():
     worm = pygame.image.load(os.path.join(IMAGES_DIR, 'Fish/C - Misc/Worm.png')).convert_alpha()
     rusty_can = pygame.image.load(os.path.join(IMAGES_DIR, 'Fish/C - Misc/Rusty Can.png')).convert_alpha()
 
+    #UI
+    menu_bg = pygame.image.load(os.path.join(IMAGES_DIR, 'ui/menu_bg.jpg')).convert_alpha()
+
+    ocean_bg = []
+    for i in range(0,100):
+        i = f"{i:03}"
+        img = pygame.transform.scale_by(pygame.image.load(os.path.join(IMAGES_DIR, f'ocean_bg/tile{i}.png')).convert_alpha(), 1)
+        ocean_bg.append(img)
+
+
+
     print('Resources loaded!')
 
-    return goldfish, catfish, angelfish, bass, trout, anchovy, clownfish, crab, pufferfish, surgeonfish, worm, rusty_can
+    return goldfish, catfish, angelfish, bass, trout, anchovy, clownfish, crab, pufferfish, surgeonfish, worm, rusty_can, menu_bg, ocean_bg
