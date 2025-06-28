@@ -1,0 +1,2 @@
+from fishi import start
+
