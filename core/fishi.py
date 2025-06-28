@@ -3,6 +3,7 @@ import pygame
 import sys
 import random
 import math
+import os
 
 # I couldn't figure out how to cleanly import modules so I am just going to import them
 #from . import module
@@ -12,6 +13,9 @@ from . import utils
 #from . import resource_handler
 import config
 from . import resource_handler
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'ui'))
+import menu_ui
 
 # Set up window
 
@@ -24,8 +28,8 @@ def start():
     clock = pygame.time.Clock()
     running = True
 
-    goldfish, catfish, angelfish, bass, trout, anchovy, clownfish, crab, pufferfish, surgeonfish, worm, rusty_can, menu_bg, ocean_bg_frames, moving_waves_frames = resource_handler.load_resources()
-    game, menu, player, mouse, ocean_bg = create_objects(goldfish, ocean_bg_frames, menu_bg, moving_waves_frames)
+    goldfish, catfish, angelfish, bass, trout, anchovy, clownfish, crab, pufferfish, surgeonfish, worm, rusty_can, menu_bg, ocean_bg_frames, moving_waves_frames, start_button, finish_button = resource_handler.load_resources()
+    game, menu, player, mouse, ocean_bg = create_objects(goldfish, ocean_bg_frames, menu_bg, moving_waves_frames, start_button, finish_button)
 
     while running:
         event = events.handle_events()
@@ -38,12 +42,12 @@ def start():
     quit()
 
 
-def create_objects(goldfish, ocean_bg_frames, menu_bg, moving_waves_frames):
+def create_objects(goldfish, ocean_bg_frames, menu_bg, moving_waves_frames, start_button_img, finish_button_img):
     game = Game()
     player = Player(goldfish)
     mouse = Mouse()
-    ocean_bg = Gif(ocean_bg_frames, 30, (0,0))
-    menu = Menu(menu_bg, moving_waves_frames)
+    ocean_bg = utils.Gif(ocean_bg_frames, 30, (0,0))
+    menu = menu_ui.Menu(menu_bg, moving_waves_frames, start_button_img, finish_button_img)
     return game, menu, player, mouse, ocean_bg
 
 
@@ -83,61 +87,6 @@ class Game:
         #draw
         ocean_bg.update(screen)
         player.update(mouse, screen)
-
-class Menu:
-    def __init__(self, menu_bg, moving_waves_frames):
-        self.menu_bg = menu_bg
-        self.menu_bg_pos = (0,0)
-        self.moving_waves = Gif(moving_waves_frames, 300, (-5,100), 1.07)
-
-    def update(self, screen):
-        self.scale()
-        self.draw(screen)
-
-    def scale(self):
-        self.menu_bg = pygame.transform.scale(self.menu_bg, (config.screen_width, config.screen_height))
-
-    def draw(self, screen):
-        screen.blit(self.menu_bg, (self.menu_bg_pos))
-        self.moving_waves.update(screen)
-
-
-class Gif:
-    def __init__(self, frames, delay, pos, size=None):
-        self.frames = frames
-        self.delay = delay
-        self.last_update = 0
-        self.index = 0
-        self.pos = pos
-        self.size = size
-        if self.size == None:
-            self.is_bg = True
-        else:
-            self.is_bg = False
-
-    def update_animation(self):
-        current_time = pygame.time.get_ticks()
-
-        if current_time - self.last_update >= self.delay:
-            self.last_update = current_time
-            self.index = (self.index + 1) % len(self.frames)
-    
-    def scale(self):
-        if self.is_bg:
-            self.frames[self.index] = pygame.transform.scale(self.frames[self.index], (config.screen_width, config.screen_height))
-        else:
-            scale_width = int(config.screen_width * self.size)
-            aspect_ratio = self.frames[self.index].get_height() / self.frames[self.index].get_width()
-            scale_height = int(scale_width * aspect_ratio)
-            self.frames[self.index] = pygame.transform.scale(self.frames[self.index], (scale_width, scale_height))
-
-    def draw(self, screen):
-        screen.blit(self.frames[self.index], self.pos)
-
-    def update(self, screen):
-        self.update_animation()
-        self.scale()
-        self.draw(screen)
 
 class Player:
     def __init__(self, goldfish):

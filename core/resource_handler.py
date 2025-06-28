@@ -24,6 +24,8 @@ def load_resources():
 
     #UI
     menu_bg = pygame.image.load(os.path.join(IMAGES_DIR, 'ui/menu_bg.jpg')).convert_alpha()
+    start_button = pygame.image.load(os.path.join(IMAGES_DIR, 'ui/start_button.png')).convert_alpha()
+    finish_button = pygame.image.load(os.path.join(IMAGES_DIR, 'ui/finish_button.png')).convert_alpha()
     moving_waves = []
     for i in range(0,9):
         i = f"{i:03}"
@@ -40,4 +42,4 @@ def load_resources():
 
     print('Resources loaded!')
 
-    return goldfish, catfish, angelfish, bass, trout, anchovy, clownfish, crab, pufferfish, surgeonfish, worm, rusty_can, menu_bg, ocean_bg, moving_waves
+    return goldfish, catfish, angelfish, bass, trout, anchovy, clownfish, crab, pufferfish, surgeonfish, worm, rusty_can, menu_bg, ocean_bg, moving_waves, start_button, finish_button
