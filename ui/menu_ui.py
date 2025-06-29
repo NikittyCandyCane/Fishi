@@ -15,10 +15,11 @@ class Menu:
         self.finish_button = Button('finish', finish_button_img, 0.3)
         self.trans_last_update = 0
         self.is_trans = False
+        self.start_clicked_yet = False
 
     def update(self, screen):
         self.scale()
-        self.draw(screen)
+        return self.draw(screen)
 
     def scale(self):
         self.menu_bg = pygame.transform.scale(self.menu_bg, (config.screen_width, config.screen_height))
@@ -28,16 +29,24 @@ class Menu:
         self.moving_waves.update(screen)
         self.start_button.update(screen)
         self.finish_button.update(screen)
+        self.fade_mode = None
         if self.is_trans:
-            self.wave_transition(screen)
+            return self.wave_transition(screen)
 
     def wave_transition(self, screen):
-        self.fade.fade_out(screen)
+        state = self.fade.fade_handle(screen)
+        if state == 'finished fading':
+            self.is_trans = False
+        elif state == 'finished both_1':
+            return 'playing'
+        
 
     def click(self, screen):
-        if self.start_button.rect.collidepoint(pygame.mouse.get_pos()):
-            self.is_trans = True
-            self.fade = utils.Fade('out', screen)
+        if self.start_clicked_yet == False:
+            if self.start_button.rect.collidepoint(pygame.mouse.get_pos()):
+                self.start_clicked_yet = True
+                self.is_trans = True
+                self.fade = utils.Fade(screen)
         if self.finish_button.rect.collidepoint(pygame.mouse.get_pos()):
             return 'quit'
         

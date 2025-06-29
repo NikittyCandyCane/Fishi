@@ -52,17 +52,31 @@ def fade_out(screen, delay, last_update, speed=5):
     screen.blit(fade_surface, (0,0))
 
 class Fade:
-    def __init__(self, name, screen, speed=5):
+    def __init__(self, screen, mode='both_1'):
         self.fade_surface = pygame.Surface(screen.get_size())
         self.fade_surface.fill((config.BLACK))
-        self.delay = 5
-        self.speed = speed
+        self.delay = 1
         self.last_update = 0
-        self. name = name
-        if name == 'out':
+        self.mode = mode
+        if mode == 'both_1' or mode == 'out':
             self.alpha = 0
         else:
-            self.alpha = 256
+            self.alpha = 255
+
+    def fade_handle(self, screen):
+        if self.mode == 'both_1':
+            self.fade_out(screen)
+            if self.alpha >= 255:
+                    self.mode = 'both_2'
+                    return 'finished both_1'
+        elif self.mode == 'both_2':
+             self.fade_in(screen)
+             if self.alpha <= 0:
+                return 'finished fading'
+        elif self.mode == 'out':
+            self.fade_out(screen)
+        else:
+            self.fade_in(screen)
 
     def fade_out(self, screen):
         self.fade_surface = pygame.Surface(screen.get_size())
@@ -71,7 +85,19 @@ class Fade:
 
         if current_time - self.last_update >= self.delay:
                 self.last_update = current_time
-                self.alpha -= 1
+                self.alpha += 20
+                self.fade_surface.set_alpha(self.alpha)
+
+        self.draw(screen)
+
+    def fade_in(self, screen):
+        self.fade_surface = pygame.Surface(screen.get_size())
+        self.fade_surface.fill((config.BLACK))
+        current_time = pygame.time.get_ticks()
+
+        if current_time - self.last_update >= self.delay:
+                self.last_update = current_time
+                self.alpha -= 20
                 self.fade_surface.set_alpha(self.alpha)
         self.draw(screen)
 

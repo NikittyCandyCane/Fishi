@@ -73,7 +73,8 @@ class Game:
 
     def screen_update(self, screen, menu, clock, player, mouse, ocean_bg):
         if self.status == 'menu':
-            self.screen_update_menu(screen, menu)
+            if self.screen_update_menu(screen, menu) is not None:
+                self.status = 'playing'
         if self.status == 'playing':
             self.screen_update_playing(screen, player, mouse, ocean_bg)
         clock.tick(60)
@@ -81,7 +82,7 @@ class Game:
     
     def screen_update_menu(self, screen, menu):
         screen.fill(config.BLACK)
-        menu.update(screen)
+        return menu.update(screen)
 
     def screen_update_playing(self, screen, player, mouse, ocean_bg):
         screen.fill(config.BLACK)
