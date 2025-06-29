@@ -40,6 +40,9 @@ class Menu:
         elif state == 'finished both_1':
             return 'playing'
         
+    def scale_fish(self):
+        for fish in self.fishes:
+            fish.scale()
 
     def click(self, screen):
         if self.start_clicked_yet == False:

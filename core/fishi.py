@@ -38,7 +38,7 @@ def start():
         if event == 'quit':
             running = False
         elif event == 'toggle_fullscreen':
-            toggle_fullscreen()
+            toggle_fullscreen(game)
         elif event == 'mouse_click':
             mouse.click(game, menu, screen)
         
@@ -55,7 +55,8 @@ def create_objects(goldfish, ocean_bg_frames, menu_bg, moving_waves_frames, star
     return game, menu, player, mouse, ocean_bg
 
 
-def toggle_fullscreen():
+def toggle_fullscreen(game):
+    game.fish_handler.scale_fishes()
     if config.FULLSCREEN:
         config.FULLSCREEN = False
     else:
@@ -95,9 +96,9 @@ class Game:
         screen.fill(config.BLACK)
         mouse.update_position()
         #draw
+        ocean_bg.update(screen)
         self.fish_handler.get_screen(screen)
         self.fish_handler.run()
-        ocean_bg.update(screen)
         player.update(mouse, screen)     
 
 class Player:

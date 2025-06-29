@@ -31,16 +31,20 @@ class Fish_Handler:
         if current_time - self.start_time > self.SPAWN_WAIT:
             self.spawn_fish()
 
+    def scale_fishes(self):
+        for fish in self.fishes:
+            fish.scale()
+
     def spawn_fish(self):
         current_time = pygame.time.get_ticks()
 
-        self.fish = []
-        if len(self.fish) < 5:
+        if len(self.fishes) < 5:
+            print(self.fishes)
             if current_time - self.last_spawn > self.spawn_delay:
                 self.last_spawn = current_time
                 self.spawn_delay = random.randint(0,1)
-                self.fishes.append(Fish(self.fish_images))
-                print(self.fishes)
+                fish = Fish(self.fish_images)
+                self.fishes.append(fish)
 
     def get_screen(self, screen):
        self.screen = screen
@@ -51,13 +55,16 @@ class Fish:
         self.fish_images = fish_images
         self.image = self.random_image()
         self.size = self.random_size()
+        self.x = random.randint(1,800)
+        self.y = random.randint(1,800)
+        self.scale()
 
     def random_image(self):
         image = random.choice(self.fish_images)
         return image
     
     def random_size(self):
-        size = round(random.uniform(0.1, 0.5), 1)
+        size = round(random.uniform(0.03, 0.3), 1)
         return size
 
     def scale(self):
@@ -65,9 +72,6 @@ class Fish:
         aspect_ratio = self.image.get_height() / self.image.get_width()
         scale_height = int(scale_width * aspect_ratio)
         self.image = pygame.transform.scale(self.image, (scale_width, scale_height))
-        
-        self.x = 100
-        self.y = 100
 
         self.width = self.image.get_width()
         self.height = self.image.get_height()
@@ -75,12 +79,11 @@ class Fish:
     def update_rotation(self):
         pass
         # self.angle = -math.degrees(math.atan2(mouse.y_displace, mouse.x_displace))
-        # self.image = pygame.transform.rotozoom(self.image, self.angle, 1)
-        # rotated_rect = self.image.get_rect(center=(mouse.x, mouse.y))
+        # self.image = pygame.transform.nrotozoom(self.image, self.angle, 1)
+        # rotated_rect = self.image.get_ rect(center=(mouse.x, mouse.y))
         # self.pos = rotated_rect.topleft
 
     def update(self, screen):
-        self.scale()
         self.update_rotation()
         self.draw(screen)
 
