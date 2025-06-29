@@ -56,14 +56,15 @@ def create_objects(goldfish, ocean_bg_frames, menu_bg, moving_waves_frames, star
 
 
 def toggle_fullscreen(game):
-    game.fish_handler.scale_fishes()
     if config.FULLSCREEN:
         config.FULLSCREEN = False
     else:
         config.FULLSCREEN = True
     screen = window.create_window()
+    pygame.display.flip()
     config.screen_width, config.screen_height = screen.get_size()
-    return screen,
+    game.fish_handler.scale_fishes()
+    return screen
 
 def quit():
     print('Game quit!')
