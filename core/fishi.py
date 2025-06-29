@@ -16,6 +16,8 @@ from . import resource_handler
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'ui'))
 import menu_ui
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'entities'))
+import fish
 
 # Set up window
 
@@ -81,15 +83,22 @@ class Game:
         pygame.display.flip()
     
     def screen_update_menu(self, screen, menu):
+        self.is_first_play_loop = False
         screen.fill(config.BLACK)
         return menu.update(screen)
 
     def screen_update_playing(self, screen, player, mouse, ocean_bg):
+        if self.is_first_play_loop == False:
+            self.fish_handler = fish.Fish_Handler(screen)
+            self.is_first_play_loop = True
+
         screen.fill(config.BLACK)
         mouse.update_position()
         #draw
+        self.fish_handler.get_screen(screen)
+        self.fish_handler.run()
         ocean_bg.update(screen)
-        player.update(mouse, screen)
+        player.update(mouse, screen)     
 
 class Player:
     def __init__(self, goldfish):

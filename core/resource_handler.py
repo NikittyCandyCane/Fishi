@@ -39,7 +39,6 @@ def load_resources():
         ocean_bg.append(img)
 
 
-
     print('Resources loaded!')
 
     return goldfish, catfish, angelfish, bass, trout, anchovy, clownfish, crab, pufferfish, surgeonfish, worm, rusty_can, menu_bg, ocean_bg, moving_waves, start_button, finish_button
