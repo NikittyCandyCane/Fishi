@@ -18,7 +18,7 @@ class Fish_Handler:
        self.fishes = []
 
     def load_resources(self):
-        none, catfish, angelfish, bass, trout, anchovy, clownfish, crab, pufferfish, surgeonfish, worm, rusty_can, none, none, none, none, none = resource_handler.load_resources()
+        goldfish, catfish, angelfish, bass, trout, anchovy, clownfish, crab, pufferfish, surgeonfish, worm, rusty_can = resource_handler.load_resources_fish_handler()
         self.fish_images = [catfish, angelfish, bass, trout, anchovy, clownfish, crab, pufferfish, surgeonfish]
 
     def run(self):

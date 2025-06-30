@@ -30,7 +30,7 @@ def start():
     clock = pygame.time.Clock()
     running = True
 
-    goldfish, catfish, angelfish, bass, trout, anchovy, clownfish, crab, pufferfish, surgeonfish, worm, rusty_can, menu_bg, ocean_bg_frames, moving_waves_frames, start_button, finish_button = resource_handler.load_resources()
+    goldfish, catfish, angelfish, bass, trout, anchovy, clownfish, crab, pufferfish, surgeonfish, worm, rusty_can, menu_bg, ocean_bg_frames, moving_waves_frames, start_button, finish_button, title_music, ambience = resource_handler.load_resources()
     game, menu, player, mouse, ocean_bg = create_objects(goldfish, ocean_bg_frames, menu_bg, moving_waves_frames, start_button, finish_button)
 
     while running:
@@ -41,8 +41,8 @@ def start():
             toggle_fullscreen(game)
         elif event == 'mouse_click':
             mouse.click(game, menu, screen)
-        
-        game.screen_update(screen, menu, clock, player, mouse, ocean_bg)
+
+        game.screen_update(screen, menu, clock, player, mouse, ocean_bg, title_music, ambience)
     quit()
 
 
@@ -74,25 +74,32 @@ def quit():
 class Game:
     def __init__(self):
         self.status = 'menu'
+        self.is_first_menu_loop = True
+        self.music_manager = Music_Manager()
 
-    def screen_update(self, screen, menu, clock, player, mouse, ocean_bg):
+    def screen_update(self, screen, menu, clock, player, mouse, ocean_bg, title_music, ambience):
         if self.status == 'menu':
-            if self.screen_update_menu(screen, menu) is not None:
+            if self.screen_update_menu(screen, menu, title_music) is not None:
                 self.status = 'playing'
         if self.status == 'playing':
-            self.screen_update_playing(screen, player, mouse, ocean_bg)
+            self.screen_update_playing(screen, player, mouse, ocean_bg, ambience)
         clock.tick(60)
         pygame.display.flip()
     
-    def screen_update_menu(self, screen, menu, ):
+    def screen_update_menu(self, screen, menu, title_music):
+        if self.is_first_menu_loop:
+            self.music_manager.play(title_music)
+            self.is_first_menu_loop = False
+
         self.is_first_play_loop = False
-        self.music_manager = Music_Manager()
-        self.music_manager.play(title_music)
         screen.fill(config.BLACK)
         return menu.update(screen)
 
-    def screen_update_playing(self, screen, player, mouse, ocean_bg):
+    def screen_update_playing(self, screen, player, mouse, ocean_bg, ambience):
+        self.is_first_menu_loop = True
         if self.is_first_play_loop == False:
+            self.music_manager.fadeout(100)
+            self.music_manager.loop_sound(ambience)
             self.fish_handler = fish.Fish_Handler(screen)
             self.is_first_play_loop = True
 
@@ -142,22 +149,31 @@ class Player:
         self.update_rotation(mouse)
         self.draw(screen)
 
-    class Music_Manager:
-        def __init__(self):
-            self.current_track = None
+class Music_Manager:
+    def __init__(self):
+        self.current_track = None
+        self.looping_channel = None
 
-        def play(self, path, loop=-1):
-            if self.current_track != path:
-                pygame.mixer.music.load(path)
-                self.current_track = path
+    def play(self, path, loop=-1):
+        if self.current_track != path:
+            pygame.mixer.music.load(path)
+            self.current_track = path
             pygame.mixer.music.play(loop)
 
-        def stop(self):
-            pygame.mixer.music.stop()
+    def stop(self):
+        pygame.mixer.music.stop()
 
-        def fadeout(self, ms):
-            pygame.mixer.music.fadeout(ms)
+    def fadeout(self, ms):
+        pygame.mixer.music.fadeout(ms)
 
+    def loop_sound(self, sound):
+        if self.looping_channel is None or not self.looping_channel.get_busy():
+            self.looping_channel = sound.play(loops=-1)
+
+    def fadeout_sound(self, ms):
+        if self.looping_channel and self.looping_channel.get_busy():
+            self.looping_channel.fadeout(ms)
+            self.looping_channel = None
 
 class Mouse:
     def __init__(self):

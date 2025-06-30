@@ -9,9 +9,9 @@ def handle_events():
                     return 'quit'
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                          return 'quit'
+                            return 'quit'
                     if event.key == pygame.K_TAB:
-                                return 'toggle_fullscreen'
+                            return 'toggle_fullscreen'
                     # other keydowns
                 if event.type == pygame.MOUSEBUTTONDOWN:
                         return 'mouse_click'
