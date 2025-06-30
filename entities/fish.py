@@ -67,7 +67,7 @@ class Fish:
         return image
     
     def random_size(self):
-        size = round(random.uniform(0.01, 0.18), 1)
+        size = round(random.uniform(0.05, 0.15), 1)
         return size
 
     def random_position(self):
@@ -126,11 +126,12 @@ class Fish:
         self.wobble_rect = self.wobble_image.get_rect(center=(self.x, self.y))
 
     def is_off_screen(self):
+        buffer = 300
         return (
-            self.x < -self.width or
-            self.x > config.screen_width + self.width or
-            self.y < -self.height or
-            self.y > config.screen_height + self.height
+            self.x + self.width < -buffer or
+            self.x > config.screen_width + buffer or
+            self.y + self.height < -buffer or
+            self.y > config.screen_height + buffer
         )
 
     def update(self, screen):
@@ -139,5 +140,6 @@ class Fish:
         self.draw(screen)
 
     def draw(self, screen):
-        #screen.blit(self.image, (self.x, self.y))
         screen.blit(self.wobble_image, self.wobble_rect)
+
+        #finding song...

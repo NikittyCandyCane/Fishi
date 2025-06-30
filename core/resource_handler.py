@@ -1,7 +1,7 @@
 import pygame
 import os
 from paths import BASEDIR
-from paths import IMAGES_DIR
+from paths import IMAGES_DIR, SOUNDS_DIR
 
 def load_resources():
     # B - Fresh Water
@@ -38,7 +38,8 @@ def load_resources():
         img = pygame.transform.scale_by(pygame.image.load(os.path.join(IMAGES_DIR, f'ocean_bg/tile{i}.png')).convert_alpha(), 1)
         ocean_bg.append(img)
 
+    title_music = os.path.join(SOUNDS_DIR, 'title.mp3')
 
     print('Resources loaded!')
 
-    return goldfish, catfish, angelfish, bass, trout, anchovy, clownfish, crab, pufferfish, surgeonfish, worm, rusty_can, menu_bg, ocean_bg, moving_waves, start_button, finish_button
+    return goldfish, catfish, angelfish, bass, trout, anchovy, clownfish, crab, pufferfish, surgeonfish, worm, rusty_can, menu_bg, ocean_bg, moving_waves, start_button, finish_button, title_music

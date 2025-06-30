@@ -84,8 +84,10 @@ class Game:
         clock.tick(60)
         pygame.display.flip()
     
-    def screen_update_menu(self, screen, menu):
+    def screen_update_menu(self, screen, menu, ):
         self.is_first_play_loop = False
+        self.music_manager = Music_Manager()
+        self.music_manager.play(title_music)
         screen.fill(config.BLACK)
         return menu.update(screen)
 
@@ -94,7 +96,6 @@ class Game:
             self.fish_handler = fish.Fish_Handler(screen)
             self.is_first_play_loop = True
 
-        screen.fill(config.BLACK)
         mouse.update_position()
         #draw
         ocean_bg.update(screen)
@@ -140,6 +141,23 @@ class Player:
         self.scale(mouse)
         self.update_rotation(mouse)
         self.draw(screen)
+
+    class Music_Manager:
+        def __init__(self):
+            self.current_track = None
+
+        def play(self, path, loop=-1):
+            if self.current_track != path:
+                pygame.mixer.music.load(path)
+                self.current_track = path
+            pygame.mixer.music.play(loop)
+
+        def stop(self):
+            pygame.mixer.music.stop()
+
+        def fadeout(self, ms):
+            pygame.mixer.music.fadeout(ms)
+
 
 class Mouse:
     def __init__(self):
